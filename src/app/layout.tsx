@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     "SHASWAT is an annual college technical and cultural fest — a celebration of technology, innovation, and culture brought together by curious minds.",
 };
 
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,6 +42,7 @@ export default function RootLayout({
           {children}
         </LenisProvider>
         <VisualEditsMessenger />
+        <Toaster theme="dark" />
       </body>
     </html>
   );

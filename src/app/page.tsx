@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -33,7 +34,10 @@ export default function Home() {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-      alert("Please log in or sign up to register for events.");
+      toast.error("Authentication Required", {
+        description: "Please log in or sign up to register for events.",
+        className: "bg-[#050505] border border-[#00f3ff]/30 text-white",
+      });
       setIsAuthOpen(true);
       return;
     }
