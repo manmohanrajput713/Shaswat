@@ -6,11 +6,13 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import EventsHub from "@/components/EventsHub";
+import GallerySection from "@/components/GallerySection";
 import SponsorsSection from "@/components/SponsorsSection";
 import Footer from "@/components/Footer";
 import RegistrationModal from "@/components/RegistrationModal";
 import AuthModal from "@/components/AuthModal";
 import type { Event } from "@/lib/events";
+import { supabase } from "@/lib/supabase";
 
 // Dynamically import the 3D background to avoid SSR issues
 const ParticleBackground = dynamic(() => import("@/components/ParticleBackground"), {
@@ -27,7 +29,15 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleRegister = (event: Event) => {
+  const handleRegister = async (event: Event) => {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      alert("Please log in or sign up to register for events.");
+      setIsAuthOpen(true);
+      return;
+    }
+
     setSelectedEvent(event);
   };
 
@@ -49,6 +59,7 @@ export default function Home() {
         <HeroSection onExploreClick={handleExploreClick} />
         <AboutSection />
         <EventsHub onRegister={handleRegister} />
+        <GallerySection />
         <SponsorsSection />
         <Footer />
       </div>

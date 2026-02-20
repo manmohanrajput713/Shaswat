@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, Zap, Music, Crown, Diamond } from "lucide-react";
+import { X, Star, Zap, Music, Crown, Diamond, ArrowLeft } from "lucide-react";
 import type { Event } from "@/lib/events";
 
 interface RegistrationModalProps {
@@ -33,6 +33,9 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
   const [activeTab, setActiveTab] = useState<"solo" | "team" | "concert">(
     event?.type === "solo" ? "solo" : event?.type === "team" ? "team" : "solo"
   );
+  const [step, setStep] = useState<"select" | "details">("select");
+  const [formData, setFormData] = useState({ name: "", college: "", rollNo: "", phone: "" });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (event) {
@@ -171,22 +174,30 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
 
   const currentPasses = activeTab === "solo" ? soloPasses : activeTab === "team" ? teamPasses : concertPasses;
 
-  const handleConfirm = async () => {
+  const handleContinue = () => {
+    if (selectedPass) setStep("details");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!selectedPass) return;
+
+    setLoading(true);
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           eventId: event?.id,
           passId: selectedPass,
+          details: formData
         }),
       });
 
       if (response.ok) {
         alert(`Booking confirmed for: ${selectedPass}. Payment gateway coming soon!`);
+        onClose();
+        setStep("select");
       } else {
         alert('Failed to register. Please try again.');
       }
@@ -194,7 +205,7 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
       console.error('Registration error:', error);
       alert('An error occurred. Please try again.');
     } finally {
-      onClose();
+      setLoading(false);
     }
   };
 
@@ -207,7 +218,7 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 overscroll-y-none"
           style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(12px)", touchAction: "none" }}
-          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          onClick={(e) => { if (e.target === e.currentTarget) { setStep("select"); onClose(); } }}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -230,87 +241,133 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
                   </span>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition-colors">
+              <button onClick={() => { setStep("select"); onClose(); }} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6">
-              {/* Pass type tabs */}
-              <div className="flex gap-2 mb-6 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                {tabs.map((tab) => (
-                  <button key={tab.id} onClick={() => { setActiveTab(tab.id); setSelectedPass(null); }} className="flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase rounded-lg transition-all duration-300" style={activeTab === tab.id ? { background: `${tab.color}18`, border: `1px solid ${tab.color}40`, color: tab.color, boxShadow: `0 0 15px ${tab.color}15` } : { color: "rgba(255,255,255,0.35)", border: "1px solid transparent" }}>
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+              {step === "select" ? (
+                <>
+                  {/* Pass type tabs */}
+                  <div className="flex gap-2 mb-6 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    {tabs.map((tab) => (
+                      <button key={tab.id} onClick={() => { setActiveTab(tab.id); setSelectedPass(null); }} className="flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase rounded-lg transition-all duration-300" style={activeTab === tab.id ? { background: `${tab.color}18`, border: `1px solid ${tab.color}40`, color: tab.color, boxShadow: `0 0 15px ${tab.color}15` } : { color: "rgba(255,255,255,0.35)", border: "1px solid transparent" }}>
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
 
-              {/* Pass cards */}
-              <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-3 mb-6">
-                {currentPasses.map((pass) => (
-                  <motion.div
-                    key={pass.id}
-                    whileHover={{ scale: 1.01 }}
-                    onClick={() => setSelectedPass(pass.id)}
-                    className="relative p-5 rounded-xl cursor-pointer transition-all duration-300"
-                    style={{
-                      background: selectedPass === pass.id ? pass.bgGradient.replace("0.06", "0.12").replace("0.02", "0.06") : pass.bgGradient,
-                      border: `1px solid ${selectedPass === pass.id ? pass.borderColor.replace("0.25", "0.7").replace("0.2", "0.6").replace("0.45", "0.8") : pass.borderColor}`,
-                      boxShadow: selectedPass === pass.id ? `0 0 30px ${pass.glowColor}20` : "none",
-                    }}
-                  >
-                    {/* Selection indicator */}
-                    {selectedPass === pass.id && (
-                      <div className="absolute top-3 left-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: pass.glowColor }}>
-                        <div className="w-2 h-2 rounded-full bg-black" />
-                      </div>
-                    )}
-                    <div className="flex items-start gap-4">
-                      <div className="mt-0.5" style={{ color: pass.glowColor }}>{pass.icon}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className="font-bold text-sm text-white" style={{ fontFamily: "var(--font-orbitron)", paddingLeft: selectedPass === pass.id ? "1.5rem" : "0" }}>{pass.title}</h3>
-                          <div className="flex flex-col items-end text-right">
-                            {pass.badge && (
-                              <div className="px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase mb-1.5" style={{ background: `${pass.badgeColor}20`, border: `1px solid ${pass.badgeColor}50`, color: pass.badgeColor }}>
-                                {pass.badge}
+                  {/* Pass cards */}
+                  <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-3 mb-6">
+                    {currentPasses.map((pass) => (
+                      <motion.div
+                        key={pass.id}
+                        whileHover={{ scale: 1.01 }}
+                        onClick={() => setSelectedPass(pass.id)}
+                        className="relative p-5 rounded-xl cursor-pointer transition-all duration-300"
+                        style={{
+                          background: selectedPass === pass.id ? pass.bgGradient.replace("0.06", "0.12").replace("0.02", "0.06") : pass.bgGradient,
+                          border: `1px solid ${selectedPass === pass.id ? pass.borderColor.replace("0.25", "0.7").replace("0.2", "0.6").replace("0.45", "0.8") : pass.borderColor}`,
+                          boxShadow: selectedPass === pass.id ? `0 0 30px ${pass.glowColor}20` : "none",
+                        }}
+                      >
+                        {/* Selection indicator */}
+                        {selectedPass === pass.id && (
+                          <div className="absolute top-3 left-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: pass.glowColor }}>
+                            <div className="w-2 h-2 rounded-full bg-black" />
+                          </div>
+                        )}
+                        <div className="flex items-start gap-4">
+                          <div className="mt-0.5" style={{ color: pass.glowColor }}>{pass.icon}</div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <h3 className="font-bold text-sm text-white" style={{ fontFamily: "var(--font-orbitron)", paddingLeft: selectedPass === pass.id ? "1.5rem" : "0" }}>{pass.title}</h3>
+                              <div className="flex flex-col items-end text-right">
+                                {pass.badge && (
+                                  <div className="px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase mb-1.5" style={{ background: `${pass.badgeColor}20`, border: `1px solid ${pass.badgeColor}50`, color: pass.badgeColor }}>
+                                    {pass.badge}
+                                  </div>
+                                )}
+                                <div className="text-xl font-black" style={{ color: pass.glowColor, fontFamily: "var(--font-orbitron)", lineHeight: 1 }}>{pass.price}</div>
+                                {pass.id === "team-particular" && <div className="text-[9px] text-white/40 mt-1">per team</div>}
                               </div>
-                            )}
-                            <div className="text-xl font-black" style={{ color: pass.glowColor, fontFamily: "var(--font-orbitron)", lineHeight: 1 }}>{pass.price}</div>
-                            {pass.id === "team-particular" && <div className="text-[9px] text-white/40 mt-1">per team</div>}
+                            </div>
+                            <p className="text-xs text-white/40 mb-2">{pass.desc}</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {pass.includes.map((item) => (
+                                <span key={item} className="text-[10px] px-2 py-0.5 rounded-full text-white/60" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                                  ✓ {item}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                        <p className="text-xs text-white/40 mb-2">{pass.desc}</p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {pass.includes.map((item) => (
-                            <span key={item} className="text-[10px] px-2 py-0.5 rounded-full text-white/60" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                              ✓ {item}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                      </motion.div>
+                    ))}
                   </motion.div>
-                ))}
-              </motion.div>
 
-              {/* Confirm button */}
-              <motion.button
-                whileHover={selectedPass ? { scale: 1.02, boxShadow: "0 0 40px rgba(0,243,255,0.4)" } : {}}
-                whileTap={selectedPass ? { scale: 0.98 } : {}}
-                onClick={handleConfirm}
-                disabled={!selectedPass}
-                className="w-full py-4 text-sm font-black tracking-[0.2em] uppercase rounded-xl transition-all duration-300"
-                style={
-                  selectedPass
-                    ? { background: "linear-gradient(135deg, #00f3ff, #0099ff)", color: "#050505", boxShadow: "0 0 30px rgba(0,243,255,0.3)" }
-                    : { background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.06)", cursor: "not-allowed" }
-                }
-              >
-                {selectedPass ? "Confirm & Proceed to Payment" : "Select a Pass to Continue"}
-              </motion.button>
+                  {/* Continue button */}
+                  <motion.button
+                    whileHover={selectedPass ? { scale: 1.02, boxShadow: "0 0 40px rgba(0,243,255,0.4)" } : {}}
+                    whileTap={selectedPass ? { scale: 0.98 } : {}}
+                    onClick={handleContinue}
+                    disabled={!selectedPass}
+                    className="w-full py-4 text-sm font-black tracking-[0.2em] uppercase rounded-xl transition-all duration-300"
+                    style={
+                      selectedPass
+                        ? { background: "linear-gradient(135deg, #00f3ff, #0099ff)", color: "#050505", boxShadow: "0 0 30px rgba(0,243,255,0.3)" }
+                        : { background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.06)", cursor: "not-allowed" }
+                    }
+                  >
+                    {selectedPass ? "Continue to Details" : "Select a Pass to Continue"}
+                  </motion.button>
 
-              <p className="text-center text-xs text-white/25 mt-3 tracking-wider">Secure payment · Instant confirmation</p>
+                  <p className="text-center text-xs text-white/25 mt-3 tracking-wider">Secure payment · Instant confirmation</p>
+                </>
+              ) : (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "var(--font-orbitron)" }}>Attendee Details</h3>
+                    <p className="text-xs text-white/40">Please fill in your information for the selected pass.</p>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase tracking-widest text-white/40 font-semibold ml-1">Full Name</label>
+                      <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#00f3ff]/50 transition-colors" placeholder="John Doe" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase tracking-widest text-white/40 font-semibold ml-1">College Name</label>
+                      <input required type="text" value={formData.college} onChange={e => setFormData({ ...formData, college: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#00f3ff]/50 transition-colors" placeholder="Your College" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase tracking-widest text-white/40 font-semibold ml-1">Roll Number</label>
+                      <input required type="text" value={formData.rollNo} onChange={e => setFormData({ ...formData, rollNo: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#00f3ff]/50 transition-colors" placeholder="123456" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase tracking-widest text-white/40 font-semibold ml-1">Phone Number</label>
+                      <input required type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#00f3ff]/50 transition-colors" placeholder="+91 9876543210" />
+                    </div>
+
+                    <div className="pt-4 flex gap-3">
+                      <button type="button" onClick={() => setStep("select")} className="px-6 py-4 rounded-xl text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/5 transition-colors border border-white/10 flex items-center justify-center">
+                        <ArrowLeft size={16} />
+                      </button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, boxShadow: "0 0 40px rgba(0,243,255,0.4)" }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={loading}
+                        type="submit"
+                        className="flex-1 py-4 text-sm font-black tracking-[0.2em] uppercase rounded-xl transition-all duration-300 disabled:opacity-50"
+                        style={{ background: "linear-gradient(135deg, #00f3ff, #0099ff)", color: "#050505", boxShadow: "0 0 30px rgba(0,243,255,0.3)" }}
+                      >
+                        {loading ? "PROCESSING..." : "SUBMIT & PAY"}
+                      </motion.button>
+                    </div>
+                  </form>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         </motion.div>

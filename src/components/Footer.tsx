@@ -127,15 +127,15 @@ export default function Footer() {
             <h4 className="text-xs font-bold tracking-[0.3em] uppercase text-white/40 mb-4">Contact</h4>
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-sm text-white/50">
-                <Mail size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#00f3ff" }} />
+                <Mail size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ffffff" }} />
                 <span>shaswat@college.edu</span>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-white/50">
-                <Phone size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#00f3ff" }} />
+                <Phone size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ffffff" }} />
                 <span>+91 98765 43210</span>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-white/50">
-                <MapPin size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ff00ff" }} />
+                <MapPin size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ffffff" }} />
                 <span>Main Auditorium, College Campus</span>
               </li>
             </ul>

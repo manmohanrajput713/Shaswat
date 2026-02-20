@@ -61,22 +61,28 @@ export default function AboutSection() {
 
         {/* Timeline / key facts */}
         <motion.div variants={containerVariants} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative">
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px" style={{ background: "linear-gradient(to bottom, transparent, #00f3ff50, #ff00ff50, transparent)" }} />
+          {/* Vertical line: Left aligned on mobile, Center aligned on md+ */}
+          <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px" style={{ background: "linear-gradient(to bottom, transparent, #00f3ff50, #ff00ff50, transparent)" }} />
           <div className="space-y-12">
             {[
               { side: "left", title: "Day 1 – Ignition", body: "Opening ceremony, technical workshops, and the first wave of competitive events kick off.", color: "#00f3ff" },
               { side: "right", title: "Day 2 – Apex", body: "Cultural performances peak alongside intense coding battles, case study presentations, and quiz finals.", color: "#ff00ff" },
               { side: "left", title: "Day 3 – Legacy", body: "Grand finale events, prize distribution, and a star-studded concert to close out the eternal quest.", color: "#ffffff" },
             ].map((item, i) => (
-              <motion.div key={i} variants={itemVariants} className={`flex ${item.side === "right" ? "flex-row-reverse" : "flex-row"} items-center gap-6`}>
-                <div className={`flex-1 ${item.side === "right" ? "text-left" : "text-right"}`}>
-                  <div className="inline-block p-5 rounded-xl" style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${item.color}20` }}>
+              <motion.div key={i} variants={itemVariants} className={`relative flex items-center gap-6 ${item.side === "right" ? "md:flex-row-reverse" : "md:flex-row"} flex-row ml-4 md:ml-0`}>
+                {/* Text Content */}
+                <div className={`flex-1 ${item.side === "right" ? "md:text-left" : "md:text-right"} pl-6 md:pl-0`}>
+                  <div className="inline-block p-5 rounded-xl w-full md:w-auto" style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${item.color}20` }}>
                     <h4 className="font-bold text-lg mb-2 font-orbitron" style={{ color: item.color, fontFamily: "var(--font-orbitron)" }}>{item.title}</h4>
                     <p className="text-sm text-white/50 leading-relaxed max-w-xs">{item.body}</p>
                   </div>
                 </div>
-                <div className="relative z-10 w-3 h-3 rounded-full flex-shrink-0" style={{ background: item.color, boxShadow: `0 0 12px ${item.color}` }} />
-                <div className="flex-1" />
+
+                {/* Timeline Dot (Absolute on mobile, relative center on md+) */}
+                <div className="absolute left-[-22.5px] md:static md:relative z-10 w-3 h-3 rounded-full flex-shrink-0" style={{ background: item.color, boxShadow: `0 0 12px ${item.color}` }} />
+
+                {/* Spacer for alternating layout on md+ */}
+                <div className="hidden md:block flex-1" />
               </motion.div>
             ))}
           </div>
