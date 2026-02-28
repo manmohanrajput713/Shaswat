@@ -128,15 +128,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-sm text-white/50">
                 <Mail size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ffffff" }} />
-                <span>shaswat@college.edu</span>
+                <span>shaswat@iipe.ac.in</span>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-white/50">
                 <Phone size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ffffff" }} />
-                <span>+91 98765 43210</span>
+                <span>+91 831 872 5895</span>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-white/50">
                 <MapPin size={14} className="mt-0.5 flex-shrink-0" style={{ color: "#ffffff" }} />
-                <span>Main Auditorium, College Campus</span>
+                <span>Permanent campus Vangali Village, Sabbavaram Mandalam, Anakapalli District, Andhra Pradesh – 531035,</span>
               </li>
             </ul>
           </div>
@@ -150,7 +150,7 @@ export default function Footer() {
           <p className="text-xs text-white/20 tracking-wider">
             Made with{" "}
             <span style={{ color: "#ff00ff" }}>♥</span>
-            {" "}by the Fest Committee
+            {" "}by Sem;colon coding club IIPE
           </p>
         </div>
       </div>

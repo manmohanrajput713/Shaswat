@@ -10,12 +10,27 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const PLACEHOLDER_PHOTOS = [
-    { id: 1, url: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop", title: "Cultural Night" },
-    { id: 2, url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop", title: "Tech Symposium" },
-    { id: 3, url: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=800&auto=format&fit=crop", title: "Hackathon Final" },
-    { id: 4, url: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=800&auto=format&fit=crop", title: "Grand Concert" },
-    { id: 5, url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=800&auto=format&fit=crop", title: "Closing Ceremony" },
+const PAST_EVENT_PHOTOS = [
+    { id: 1, url: "/DSC00498.JPG", title: "Event Memories" },
+    { id: 2, url: "/DSC00711.JPG", title: "Event Memories" },
+    { id: 3, url: "/DSC00742.JPG", title: "Event Memories" },
+    { id: 4, url: "/DSC00834.JPG", title: "Event Memories" },
+    { id: 5, url: "/DSC09875.JPG", title: "Event Memories" },
+    { id: 6, url: "/DSC09930.JPG", title: "Event Memories" },
+    { id: 7, url: "/DSC_1048.JPG", title: "Event Memories" },
+    { id: 8, url: "/DSC_1068.JPG", title: "Event Memories" },
+    { id: 9, url: "/DSC_1076.JPG", title: "Event Memories" },
+    { id: 10, url: "/DSC_2126.JPG", title: "Event Memories" },
+    { id: 11, url: "/DSC_2264.JPG", title: "Event Memories" },
+    { id: 12, url: "/DSC_2683.JPG", title: "Event Memories" },
+    { id: 13, url: "/DSC_3161.JPG", title: "Event Memories" },
+    { id: 14, url: "/DSC_3508.JPG", title: "Event Memories" },
+    { id: 15, url: "/DSC_3555.JPG", title: "Event Memories" },
+    { id: 16, url: "/DSC_3563.JPG", title: "Event Memories" },
+    { id: 17, url: "/DSC_3633.JPG", title: "Event Memories" },
+    { id: 18, url: "/IMG_3514.JPG", title: "Event Memories" },
+    { id: 19, url: "/IMG_3549.JPG", title: "Event Memories" },
+    { id: 20, url: "/IMG_3623.JPG", title: "Event Memories" },
 ];
 
 export default function GallerySection() {
@@ -76,28 +91,29 @@ export default function GallerySection() {
                         className="w-full"
                     >
                         <CarouselContent className="-ml-2 md:-ml-4">
-                            {PLACEHOLDER_PHOTOS.map((photo, index) => (
+                            {PAST_EVENT_PHOTOS.map((photo, index) => (
                                 <CarouselItem key={photo.id} className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 lg:basis-1/3">
                                     <motion.div
                                         whileHover={{ scale: 1.02 }}
                                         className="group relative rounded-2xl overflow-hidden aspect-[4/3] border border-white/10"
-                                        style={{ background: "rgba(255,255,255,0.02)" }}
+                                        style={{ background: "rgba(255,255,255,0.02)", willChange: "transform", transform: "translateZ(0)" }}
                                     >
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={photo.url}
                                             alt={photo.title}
-                                            className="w-full h-full object-cover opacity-50 transition-all duration-700 group-hover:scale-110 group-hover:opacity-80"
-                                            style={{ mixBlendMode: "luminosity" }}
+                                            className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105"
+                                            style={{ willChange: "transform", transform: "translateZ(0)" }}
+                                            loading="lazy"
                                         />
 
                                         {/* Hover Overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-[#050505]/30 to-transparent transition-opacity duration-300" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/90 via-[#050505]/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
                                         {/* Caption */}
                                         <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 transition-transform duration-300 group-hover:translate-y-0">
                                             <div className="text-xs font-black tracking-[0.2em] text-[#00f3ff] uppercase mb-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                                {index + 1} // {PLACEHOLDER_PHOTOS.length}
+                                                {index + 1} // {PAST_EVENT_PHOTOS.length}
                                             </div>
                                             <h3
                                                 className="text-xl font-bold text-white drop-shadow-md"

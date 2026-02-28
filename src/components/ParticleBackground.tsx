@@ -141,10 +141,10 @@ function ParticleVortex() {
   return (
     <Points ref={pointsRef} positions={positions} colors={colors} stride={3}>
       <PointMaterial
-        size={0.018}
+        size={0.012}
         vertexColors
         transparent
-        opacity={0.85}
+        opacity={0.3}
         sizeAttenuation
         depthWrite={false}
       />
@@ -194,10 +194,10 @@ function SecondaryRing() {
   return (
     <Points ref={ref} positions={positions} stride={3}>
       <PointMaterial
-        size={0.012}
+        size={0.008}
         color="#00f3ff"
         transparent
-        opacity={0.3}
+        opacity={0.1}
         sizeAttenuation
         depthWrite={false}
       />

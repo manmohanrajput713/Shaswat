@@ -31,18 +31,25 @@ export default function Home() {
   };
 
   const handleRegister = async (event: Event) => {
-    const { data: { session } } = await supabase.auth.getSession();
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
 
-    if (!session) {
-      toast.error("Authentication Required", {
-        description: "Please log in or sign up to register for events.",
-        className: "bg-[#050505] border border-[#00f3ff]/30 text-white",
+      if (!session) {
+        toast.error("Authentication Required", {
+          description: "Please log in or sign up to view and purchase event passes.",
+          className: "bg-[#050505] border border-[#00f3ff]/30 text-white",
+        });
+        setIsAuthOpen(true);
+        return;
+      }
+      setSelectedEvent(event);
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      toast.error("Auth service unavailable", {
+        description: "Please try again later.",
+        className: "bg-[#050505] border border-red-500/30 text-white",
       });
-      setIsAuthOpen(true);
-      return;
     }
-
-    setSelectedEvent(event);
   };
 
   const handleCloseModal = () => {
@@ -69,7 +76,7 @@ export default function Home() {
       </div>
 
       {/* Registration Modal */}
-      <RegistrationModal event={selectedEvent} onClose={handleCloseModal} />
+      <RegistrationModal event={selectedEvent} onClose={handleCloseModal} onLoginRequest={() => setIsAuthOpen(true)} />
 
       {/* Auth Modal */}
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />

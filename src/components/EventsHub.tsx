@@ -4,16 +4,20 @@ import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { CULTURAL_EVENTS, TECHNICAL_EVENTS, type Event } from "@/lib/events";
 
+import { Info } from "lucide-react";
+import EventDetailsModal from "./EventDetailsModal";
+
 interface EventCardProps {
   event: Event;
   onRegister: (event: Event) => void;
+  onDetails: (event: Event) => void;
   index: number;
 }
 
-function EventCard({ event, onRegister, index }: EventCardProps) {
+function EventCard({ event, onRegister, onDetails, index }: EventCardProps) {
   const isBlue = event.track === "technical";
   const accentColor = isBlue ? "#00f3ff" : "#ff00ff";
-  const bgColor = isBlue ? "rgba(0,243,255,0.04)" : "rgba(255,0,255,0.04)";
+  const bgColor = isBlue ? "rgba(0,243,255,0.08)" : "rgba(255,0,255,0.08)";
   const borderColor = isBlue ? "rgba(0,243,255,0.2)" : "rgba(255,0,255,0.2)";
 
   return (
@@ -23,10 +27,24 @@ function EventCard({ event, onRegister, index }: EventCardProps) {
       transition={{ delay: index * 0.07, duration: 0.6 }}
       whileHover={{ y: -6, scale: 1.02 }}
       className="relative flex-shrink-0 w-60 sm:w-64 p-5 rounded-2xl cursor-default group"
-      style={{ background: bgColor, border: `1px solid ${borderColor}`, backdropFilter: "blur(16px)" }}
+      style={{
+        background: bgColor,
+        border: `1px solid ${borderColor}`,
+        willChange: "transform"
+      }}
     >
       {/* Glow on hover */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ boxShadow: `0 0 30px ${accentColor}20`, background: `radial-gradient(circle at 50% 0%, ${accentColor}08, transparent 70%)` }} />
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ boxShadow: `0 0 30px ${accentColor}20`, background: `radial-gradient(circle at 50% 0%, ${accentColor}08, transparent 70%)`, willChange: "opacity" }} />
+
+      {/* Info Button */}
+      <button
+        onClick={() => onDetails(event)}
+        className="absolute top-4 right-4 z-10 p-1.5 rounded-full text-white/40 hover:text-white transition-colors"
+        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+        title="Event Details"
+      >
+        <Info size={16} />
+      </button>
 
       {/* Event icon */}
       <div className="text-3xl mb-3">{event.icon}</div>
@@ -70,6 +88,7 @@ interface EventsHubProps {
 
 export default function EventsHub({ onRegister }: EventsHubProps) {
   const [activeTrack, setActiveTrack] = useState<"cultural" | "technical">("technical");
+  const [selectedDetailsEvent, setSelectedDetailsEvent] = useState<Event | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -159,7 +178,7 @@ export default function EventsHub({ onRegister }: EventsHubProps) {
             style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(0,243,255,0.3) transparent", WebkitOverflowScrolling: "touch" }}
           >
             {events.map((event, i) => (
-              <EventCard key={event.id} event={event} onRegister={onRegister} index={i} />
+              <EventCard key={event.id} event={event} onRegister={onRegister} onDetails={(e) => setSelectedDetailsEvent(e)} index={i} />
             ))}
           </motion.div>
         </div>
@@ -169,21 +188,10 @@ export default function EventsHub({ onRegister }: EventsHubProps) {
           <span className="text-xs text-white/25 tracking-[0.2em] uppercase">← Scroll to see all events →</span>
         </div>
 
-        {/* Bottom stats */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5, duration: 0.8 }} className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { value: "8", label: "Cultural Events", color: "#ff00ff" },
-            { value: "6", label: "Technical Events", color: "#00f3ff" },
-            { value: "₹1L+", label: "Prize Pool", color: "#ffd700" },
-            { value: "500+", label: "Participants Expected", color: "#00ff88" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div className="text-2xl font-black font-orbitron mb-1" style={{ color: stat.color, fontFamily: "var(--font-orbitron)" }}>{stat.value}</div>
-              <div className="text-xs text-white/40 tracking-widest uppercase">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
+
       </div>
+
+      <EventDetailsModal event={selectedDetailsEvent} onClose={() => setSelectedDetailsEvent(null)} onRegister={onRegister} />
     </section>
   );
 }

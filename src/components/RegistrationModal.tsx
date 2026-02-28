@@ -8,6 +8,7 @@ import type { Event } from "@/lib/events";
 interface RegistrationModalProps {
   event: Event | null;
   onClose: () => void;
+  onLoginRequest: () => void;
 }
 
 type PassType = "solo-particular" | "solo-gold" | "team-particular" | "team-diamond" | "concert-1" | "concert-3" | "concert-5" | "concert-7";
@@ -28,7 +29,7 @@ interface PassConfig {
   premium?: boolean;
 }
 
-export default function RegistrationModal({ event, onClose }: RegistrationModalProps) {
+export default function RegistrationModal({ event, onClose, onLoginRequest }: RegistrationModalProps) {
   const [selectedPass, setSelectedPass] = useState<PassType | null>(null);
   const [activeTab, setActiveTab] = useState<"solo" | "team" | "concert">(
     event?.type === "solo" ? "solo" : event?.type === "team" ? "team" : "solo"
@@ -36,6 +37,23 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
   const [step, setStep] = useState<"select" | "details">("select");
   const [formData, setFormData] = useState({ name: "", college: "", rollNo: "", phone: "" });
   const [loading, setLoading] = useState(false);
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    import("@/lib/supabase").then(({ supabase }) => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+      });
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+      });
+
+      return () => subscription.unsubscribe();
+    });
+  }, []);
 
   useEffect(() => {
     if (event) {
@@ -166,16 +184,36 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
     },
   ];
 
-  const tabs = [
+  const allTabs = [
     { id: "solo" as const, label: "Solo", color: "#00f3ff" },
     { id: "team" as const, label: "Team", color: "#ff00ff" },
     { id: "concert" as const, label: "Concert", color: "#ffd700" },
   ];
 
+  const tabs = allTabs.filter(tab => {
+    if (tab.id === "concert") return true;
+    if (event?.type === "solo" && tab.id === "team") return false;
+    if (event?.type === "team" && tab.id === "solo") return false;
+    return true;
+  });
+
   const currentPasses = activeTab === "solo" ? soloPasses : activeTab === "team" ? teamPasses : concertPasses;
 
   const handleContinue = () => {
-    if (selectedPass) setStep("details");
+    if (selectedPass) {
+      if (!session) {
+        onClose();
+        import("sonner").then(({ toast }) => {
+          toast.error("Authentication Required", {
+            description: "Please log in or sign up to continue registration.",
+            className: "bg-[#050505] border border-[#00f3ff]/30 text-white",
+          });
+        });
+        onLoginRequest();
+      } else {
+        setStep("details");
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -320,7 +358,7 @@ export default function RegistrationModal({ event, onClose }: RegistrationModalP
                         : { background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.06)", cursor: "not-allowed" }
                     }
                   >
-                    {selectedPass ? "Continue to Details" : "Select a Pass to Continue"}
+                    {selectedPass ? (session ? "Continue to Details" : "Login to Continue") : "Select a Pass to Continue"}
                   </motion.button>
 
                   <p className="text-center text-xs text-white/25 mt-3 tracking-wider">Secure payment · Instant confirmation</p>

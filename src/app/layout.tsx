@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
-import { VisualEditsMessenger } from "orchids-visual-edits";
 import LenisProvider from "@/components/LenisProvider";
 
 const geistSans = Geist({
@@ -41,7 +40,6 @@ export default function RootLayout({
         <LenisProvider>
           {children}
         </LenisProvider>
-        <VisualEditsMessenger />
         <Toaster theme="dark" />
       </body>
     </html>

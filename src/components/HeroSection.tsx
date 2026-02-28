@@ -10,18 +10,19 @@ export default function HeroSection({ onExploreClick }: HeroSectionProps) {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-12">
       {/* Background Video */}
-      <div className="absolute inset-0 z-0 pointer-events-none border-b border-[#00f3ff]/10">
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <video
           autoPlay
           loop
           muted
           playsInline
           className="w-full h-full object-cover opacity-[0.55]"
+          style={{ willChange: "transform", transform: "translateZ(0)" }}
         >
           <source src="/gallery-bg.mp4" type="video/mp4" />
         </video>
         {/* Layer to blend the video with the dark background while highlighting the text */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-[#050505]/60 to-[#050505]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-6xl mx-auto flex flex-col items-center justify-center w-full">

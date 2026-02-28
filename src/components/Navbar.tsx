@@ -67,13 +67,9 @@ export default function Navbar({ onLoginClick }: { onLoginClick?: () => void }) 
             whileHover={{ scale: 1.02 }}
             onClick={() => handleNavClick("#home")}
           >
-            <div className="relative w-10 h-10 lg:w-16 lg:h-16 -ml-2 flex items-center justify-center">
-            </div>
-            <div>
-              <span className="font-orbitron text-lg lg:text-xl font-black tracking-widest" style={{ fontFamily: "var(--font-orbitron)", color: "#ffffff", textShadow: "0 0 10px rgba(0,243,255,0.5)" }}>
-                SHASWAT <span style={{ color: "#00f3ff" }}>2.0</span>
-              </span>
-              <div className="text-[9px] text-white/40 tracking-[0.25em] uppercase font-light -mt-0.5">The Eternal Quest</div>
+            <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/shaswat_logo.png" alt="Shaswat Logo" className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,0,255,0.5)]" />
             </div>
           </motion.div>
           <div className="hidden md:flex items-center gap-1">

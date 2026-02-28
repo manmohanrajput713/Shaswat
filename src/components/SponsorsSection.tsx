@@ -4,7 +4,20 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 const SPONSORS = [
-  { name: "TechCorp", tier: "Title Sponsor", placeholder: "TC" },
+  {
+    name: "Ovalpod",
+    tier: "Title Sponsor",
+    placeholder: "OP",
+    logo: (
+      <svg viewBox="0 0 100 100" className="w-14 h-14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="76" r="10" stroke="#ff5252" strokeWidth="8" />
+        <circle cx="76" cy="24" r="10" stroke="#ff5252" strokeWidth="8" />
+        <path d="M 20 62 C 15 25, 40 20, 62 20" stroke="#ff5252" strokeWidth="8" strokeLinecap="round" />
+        <path d="M 38 78 C 80 85, 85 60, 78 38" stroke="#ff5252" strokeWidth="8" strokeLinecap="round" />
+      </svg>
+    )
+  },
+  { name: "TechCorp", tier: "Gold Sponsor", placeholder: "TC" },
   { name: "InnovateLab", tier: "Gold Sponsor", placeholder: "IL" },
   { name: "CloudBase", tier: "Gold Sponsor", placeholder: "CB" },
   { name: "DevStudio", tier: "Silver Sponsor", placeholder: "DS" },
@@ -22,17 +35,17 @@ export default function SponsorsSection() {
 
   return (
     <section id="sponsors" className="relative py-24 lg:py-32 px-4">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(0,243,255,0.025) 0%, transparent 60%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(255,82,82,0.02) 0%, transparent 60%)" }} />
 
       <div ref={ref} className="max-w-6xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full text-xs tracking-[0.3em] uppercase" style={{ background: "rgba(255,215,0,0.06)", border: "1px solid rgba(255,215,0,0.2)", color: "#ffd700" }}>
-            <span className="w-1 h-1 rounded-full bg-[#ffd700]" />
+          <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full text-xs tracking-[0.3em] uppercase" style={{ background: "rgba(255,82,82,0.06)", border: "1px solid rgba(255,82,82,0.2)", color: "#ff5252" }}>
+            <span className="w-1 h-1 rounded-full bg-[#ff5252]" />
             Sponsors & Partners
           </div>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight mb-4" style={{ fontFamily: "var(--font-orbitron)" }}>
             <span className="text-white">Powered by</span>{" "}
-            <span style={{ color: "#ffffff", textShadow: "0 0 20px rgba(0,243,255,0.5)" }}>Visionaries</span>
+            <span style={{ color: "#ffffff", textShadow: "0 0 20px rgba(255,82,82,0.4)" }}>Visionaries</span>
           </h2>
           <p className="text-white/40 text-base max-w-xl mx-auto">
             The organizations that make Shaswat possible — leading companies and innovative startups investing in the future.
@@ -41,11 +54,11 @@ export default function SponsorsSection() {
 
         {/* Title Sponsor - featured */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2, duration: 0.8 }} className="flex justify-center mb-12">
-          <div className="relative flex flex-col items-center justify-center w-64 h-32 rounded-2xl" style={{ background: "linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,170,0,0.04))", border: "1px solid rgba(255,215,0,0.35)", boxShadow: "0 0 40px rgba(255,215,0,0.08)" }}>
-            <div className="text-3xl font-black text-white" style={{ fontFamily: "var(--font-orbitron)" }}>TC</div>
-            <div className="text-xs text-white/50 mt-1">TechCorp</div>
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase" style={{ background: "rgba(255,215,0,0.15)", border: "1px solid rgba(255,215,0,0.5)", color: "#ffd700" }}>
-              Title Sponsor
+          <div className="relative flex flex-col items-center justify-center w-64 h-32 rounded-2xl" style={{ background: "linear-gradient(135deg, rgba(255,82,82,0.08), rgba(255,82,82,0.02))", border: "1px solid rgba(255,82,82,0.3)", boxShadow: "0 0 40px rgba(255,82,82,0.08)" }}>
+            {SPONSORS[0].logo ? SPONSORS[0].logo : <div className="text-3xl font-black text-white" style={{ fontFamily: "var(--font-orbitron)" }}>{SPONSORS[0].placeholder}</div>}
+            <div className="text-xs font-bold text-white mt-3 uppercase tracking-widest">{SPONSORS[0].name}</div>
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase" style={{ background: "#ff5252", color: "#000", boxShadow: "0 0 15px rgba(255,82,82,0.4)" }}>
+              {SPONSORS[0].tier}
             </div>
           </div>
         </motion.div>
